@@ -32,7 +32,8 @@ const UserSchema = new mongoose.Schema(
 		salt: String,
 		role: {
 			type: String,
-			default: 'subscriber',
+			default: 'user',
+			enum: ['user', 'admin'],
 		},
 		resetPasswordLink: {
 			type: String,
@@ -42,8 +43,7 @@ const UserSchema = new mongoose.Schema(
 	{ timestamps: true }
 )
 
-userSchema
-	.virtual('password')
+UserSchema.virtual('password')
 	.set(function (password) {
 		this._password = password
 		this.salt = this.makeSalt()
@@ -53,7 +53,7 @@ userSchema
 		return this._password
 	})
 
-userSchema.methods = {
+UserSchema.methods = {
 	encryptPassword: function (password) {
 		if (!password) return ''
 		try {
