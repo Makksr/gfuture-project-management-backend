@@ -4,7 +4,7 @@ const cors = require('cors')
 const helmet = require('helmet')
 const morgan = require('morgan')
 const mongoose = require('mongoose')
-const { AuthRoutes, ProjectRoutes } = require('./routes')
+const { AuthRoutes, ProjectRoutes, TaskRoutes } = require('./routes')
 
 const app = express()
 
@@ -14,6 +14,7 @@ app.use(morgan('dev'))
 app.use(express.json())
 app.use('/api/auth', AuthRoutes)
 app.use('/api/projects', ProjectRoutes)
+app.use('/api/tasks', TaskRoutes)
 
 mongoose
 	.connect(process.env.DATABASE_URL, {})
