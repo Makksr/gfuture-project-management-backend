@@ -1,7 +1,7 @@
 const { expressjwt: expressJwt } = require('express-jwt')
 const { UserSchema } = require('../models')
 
-exports.validateToken = expressJwt({
+const validateToken = expressJwt({
 	secret: process.env.JWT_SECRET,
 	algorithms: ['HS256'],
 	userProperty: 'auth',
@@ -13,7 +13,7 @@ exports.validateToken = expressJwt({
 	},
 })
 
-exports.authMiddleware = async (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
 	try {
 		if (!req.auth) {
 			throw new Error('Not Authenticated')
@@ -29,4 +29,9 @@ exports.authMiddleware = async (req, res, next) => {
 			error: 'User not found',
 		})
 	}
+}
+
+module.exports = {
+	authMiddleware,
+	validateToken,
 }

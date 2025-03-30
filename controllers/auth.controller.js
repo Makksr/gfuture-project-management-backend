@@ -2,57 +2,74 @@ const shortId = require('shortid')
 const { UserSchema } = require('../models')
 const jwt = require('jsonwebtoken')
 
-exports.register = async (req, res) => {
+const register = async (req, res) => {
 	console.log('Register Data', req.body)
 	const { name, email, password, role } = req.body
 	const user = await UserSchema.findOne({ email }).exec()
 	if (!user) {
-		const token = JsonWebTokenError.sign({ name, email, password, role }, process.env.JWT_ACCOUNT_ACTIVATION, {
+		const token = jwt.sign({ name, email, password, role }, process.env.JWT_ACCOUNT_ACTIVATION, {
 			expiresIn: '10m',
 		})
 		// placeholder for code to implement email token system
 
-		// bypassing email verification
-		this.registerActivate(token)
-	}
+		// bypassing email verification , when email verification this code should be remove !!!!
+		// const { name, email, password } = jwt.decode(token)
+		const username = shortId.generate()
+		const newUser = await new UserSchema({ username, name, email, password, role })
 
-	exports.registerActivate = (req, res) => {
-		const { token } = req.body
-		console.log(token)
-		jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION, async (err) => {
-			if (err) {
-				console.log('JWT VERIFY IN ACCOUNT ACTIVATION ERROR', err)
-				return res.status(401).json({
-					error: 'Expired link. Try again',
-				})
-			}
-			const { name, email, password } = jwt.decode(token)
-			console.log(name, email, password)
-			const username = shortId.generate()
-			const user = await UserSchema.findOne({ email }).exec()
-			console.log('user', user)
-			if (user) {
-				return res.status(401).json({
-					error: 'Email is taken',
-				})
-			}
-			const newUser = await new UserSchema({ username, name, email, password })
-
-			try {
-				await newUser.save()
-				return res.json({
-					message: 'Signup success. Please signin.',
-				})
-			} catch (err) {
-				return res.status(401).json({
-					error: 'Error saving user in database. Try signup again',
-				})
-			}
+		try {
+			await newUser.save()
+			return res.json({
+				message: 'Signup success. Please signin.',
+			})
+		} catch (err) {
+			return res.status(401).json({
+				error: 'Error saving user in database. Try signup again',
+			})
+		}
+	} else {
+		return res.status(401).json({
+			error: 'Email is taken',
 		})
 	}
 }
 
-exports.login = async (req, res) => {
+const registerActivate = (req, res) => {
+	const { token } = req.body
+	console.log(token)
+	jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION, async (err) => {
+		if (err) {
+			console.log('JWT VERIFY IN ACCOUNT ACTIVATION ERROR', err)
+			return res.status(401).json({
+				error: 'Expired link. Try again',
+			})
+		}
+		const { name, email, password } = jwt.decode(token)
+		console.log(name, email, password)
+		const username = shortId.generate()
+		const user = await UserSchema.findOne({ email }).exec()
+		console.log('user', user)
+		if (user) {
+			return res.status(401).json({
+				error: 'Email is taken',
+			})
+		}
+		const newUser = await new UserSchema({ username, name, email, password })
+
+		try {
+			await newUser.save()
+			return res.json({
+				message: 'Signup success. Please signin.',
+			})
+		} catch (err) {
+			return res.status(401).json({
+				error: 'Error saving user in database. Try signup again',
+			})
+		}
+	})
+}
+
+const login = async (req, res) => {
 	const { email, password } = req.body
 	try {
 		const user = await UserSchema.findOne({ email }).exec()
@@ -79,4 +96,10 @@ exports.login = async (req, res) => {
 			error: 'Signin error. Try again',
 		})
 	}
+}
+
+module.exports = {
+	login,
+	register,
+	registerActivate,
 }

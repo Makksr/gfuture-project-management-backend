@@ -1,6 +1,6 @@
 const { UserSchema } = require('../models')
 
-exports.adminMiddleware = async (req, res, next) => {
+const adminMiddleware = async (req, res, next) => {
 	const adminUserId = req.user._id
 	try {
 		const user = await UserSchema.findById({ _id: adminUserId }).exec()
@@ -19,4 +19,8 @@ exports.adminMiddleware = async (req, res, next) => {
 	} catch (err) {
 		console.log(err)
 	}
+}
+
+module.exports = {
+	adminMiddleware,
 }
