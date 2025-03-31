@@ -10,7 +10,7 @@ router.post(
 	AuthMiddleware.validateToken,
 	AuthMiddleware.authMiddleware,
 	UploadMiddleware.single('file'),
-	TaskValidator.createUpdateValidator,
+	TaskValidator.createValidator,
 	runValidation,
 	TaskController.createTask
 )
@@ -51,7 +51,7 @@ router.patch(
 	AuthMiddleware.authMiddleware,
 	UploadMiddleware.single('file'),
 	TaskValidator.idValidator,
-	TaskValidator.createUpdateValidator,
+	TaskValidator.updateValidator,
 	runValidation,
 	TaskController.updateTask
 )

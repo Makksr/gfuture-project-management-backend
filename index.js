@@ -16,10 +16,15 @@ app.use('/api/auth', AuthRoutes)
 app.use('/api/projects', ProjectRoutes)
 app.use('/api/tasks', TaskRoutes)
 
+// Connect to MongoDB
 mongoose
 	.connect(process.env.DATABASE_URL, {})
 	.then(() => {
 		console.log('MongoDB Connected')
-		app.listen(8000, () => console.log('Server running on port 8000'))
+		if (process.env.NODE_ENV !== 'test') {
+			app.listen(8000, () => console.log('Server running on port 8000'))
+		}
 	})
 	.catch((err) => console.log(err))
+
+module.exports = app

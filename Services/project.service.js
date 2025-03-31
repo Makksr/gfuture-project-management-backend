@@ -18,6 +18,7 @@ const getProjectById = async (projectId) => {
 }
 
 const updateProject = async (id, updateData) => {
+	console.log(updateData)
 	return await ProjectSchema.findByIdAndUpdate(id, updateData, { new: true })
 }
 

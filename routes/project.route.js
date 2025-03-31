@@ -10,7 +10,7 @@ router.post(
 	AuthMiddleware.validateToken,
 	AuthMiddleware.authMiddleware,
 	RolesMiddleware.adminMiddleware,
-	ProjectValidator.createUpdateValidator,
+	ProjectValidator.createValidator,
 	runValidation,
 	ProjectController.createProject
 )
@@ -32,7 +32,7 @@ router.patch(
 	AuthMiddleware.authMiddleware,
 	RolesMiddleware.adminMiddleware,
 	ProjectValidator.idValidator,
-	ProjectValidator.createUpdateValidator,
+	ProjectValidator.updateValidator,
 	runValidation,
 	ProjectController.updateProject
 )

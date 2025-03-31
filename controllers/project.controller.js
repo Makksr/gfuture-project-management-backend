@@ -33,6 +33,7 @@ const getProjectById = async (req, res) => {
 
 const updateProject = async (req, res) => {
 	try {
+		console.log(req.body)
 		const project = await ProjectService.updateProject(req.params.id, req.body)
 		if (!project) return res.status(404).json({ error: 'Project not found' })
 		res.json(project)
